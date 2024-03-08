@@ -12,10 +12,7 @@ export const initServer = () => {
   app.use(cookieParser());
   app.use(cors());
   app.use(router);
-
-  app.use((err, req, res, next) => {
-    res.status(500).send("Something went wrong");
-  });
+  
 
   return app;
 };

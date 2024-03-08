@@ -3,6 +3,7 @@ import * as http from "http";
 import { initServer } from "./server";
 import { AppDataSource } from "../db/dataSource";
 
+const  path = require("path");
 const app = initServer();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 8000;
