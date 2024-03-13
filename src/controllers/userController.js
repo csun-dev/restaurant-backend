@@ -10,7 +10,7 @@ export const signup = async (req, res, next) => {
 
     await userService.signup(username, email, password);
 
-    return res.status(201);
+    return res.status(200).json({ message: "Success" });
   } catch (err) {
     next(err);
   }
@@ -23,9 +23,10 @@ export const login = async (req, res, next) => {
     if (!email || !password) {
       throw new Error("Missing email or password!");
     }
-    await userService.login(email, password);
+    const user = await userService.login(email, password);
 
-    return res.status(200);
+    res.cookie("token", user);
+    return res.status(200).json({ message: "Success" });
   } catch (err) {
     next(err);
   }

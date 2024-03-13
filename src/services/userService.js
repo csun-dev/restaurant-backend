@@ -1,64 +1,43 @@
 import * as userDao from "../models/userDao";
 import * as bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const signup = async (username, email, password) => {
   try {
     const user = await userDao.getUserByEmail(email);
     if (user) {
       throw new Error("Email is already in use by another user");
-    } else {
-      const encrptedPass = bcrypt.hash(password, 12);
-      userDao.signUpUser(username, email, "" + encrptedPass);
     }
-  } catch (err) {
-    throw new Error(err);
+
+    const hashesPassword = await bcrypt.hash(password, 12);
+    await userDao.signUpUser(username, email, hashesPassword);
+  } catch (error) {
+    throw new Error(error);
   }
 };
 
 export const login = async (email, password) => {
   try {
     const user = await userDao.getUserByEmail(email);
-    const passwordMatch = bcrypt.compare(password, user.password);
+
+    if (!user) {
+      throw new Error("User not found!");
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
       throw new Error("Wrong password");
     }
-  } catch (err) {
-    throw new Error("Error Login");
-  }
-};
 
-export const editUsername = async (newUsername) => {
-  try {
-    const user = await userDao.getUserByUsername(newUsername);
-    if (user) {
-      throw new Error("Username already in use by another user");
-    } else {
-      userDao.editUser(newUsername);
-    }
-  } catch (err) {
-    throw new Error(err);
-  }
-};
+    const name = user.username;
+    const userCode = user.id;
+    const token = jwt.sign({ name, userCode }, "1d", {
+      expiresIn: "1d",
+    });
 
-export const editEmail = async (newEmail) => {
-  try {
-    const user = await userDao.getUserByEmail(newEmail); //gets user from email if user exist then email taken
-    if (user) {
-      throw new Error("Email already in use by another user");
-    } else {
-      userDao.editUser(newEmail);
-    }
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-
-export const editPassword = async (newPass) => {
-  try {
-    const encrptedPass = bcrypt(newPass, 12);
-    userDao.editUser(newPass);
-  } catch (err) {
-    throw new Error(err);
+    return token;
+  } catch (error) {
+    throw new Error(error);
   }
 };
