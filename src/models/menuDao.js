@@ -44,3 +44,23 @@ export const readMenuDetail = async (mid) => {
     throw new Error("Something went wrong");
   }
 };
+
+export const readMenuById = async (mid) => {
+  try {
+    const [menu] = await AppDataSource.query(
+      `
+      SELECT
+        id,
+        name,
+        description,
+        price,
+        image_url
+      FROM menus
+      `
+    );
+
+    return menu;
+  } catch {
+    throw new Error("Something went wrong");
+  }
+};
