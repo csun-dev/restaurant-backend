@@ -35,7 +35,7 @@ export const login = async (req, res, next) => {
 export const logout = async (req, res, next) => {
   try {
     res.clearCookie("token");
-    return res.json({ message: "Logout Success" });
+    return res.json({ message: "Success" });
   } catch (error) {
     next(error);
   }
