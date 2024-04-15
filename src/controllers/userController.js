@@ -31,3 +31,22 @@ export const login = async (req, res, next) => {
     next(err);
   }
 };
+
+export const logout = async (req, res, next) => {
+  try {
+    res.clearCookie("token");
+    return res.json({ message: "Logout Success" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUser = async (req, res, next) => {
+  try {
+    const { name } = req.user;
+
+    return res.json({ message: "Success", name });
+  } catch (error) {
+    next(error);
+  }
+};
